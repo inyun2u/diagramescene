@@ -64,7 +64,6 @@ class Arrow;
 class DiagramItem : public QGraphicsPolygonItem
 {
 public:
-    QList<Arrow *> arrows;
     enum { Type = UserType + 15 };
     enum DiagramType { Step, Conditional, StartEnd, Io };
 
@@ -86,7 +85,7 @@ private:
     DiagramType myDiagramType;
     QPolygonF myPolygon;
     QMenu *myContextMenu;
-
+    QList<Arrow *> arrows;
 };
 //! [0]
 

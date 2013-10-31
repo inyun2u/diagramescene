@@ -150,10 +150,8 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
         case InsertLine:
             line = new QGraphicsLineItem(QLineF(mouseEvent->scenePos(),
                                         mouseEvent->scenePos()));
-
             line->setPen(QPen(myLineColor, 2));
             addItem(line);
-            qDebug("%f",line->line().length());
             break;
 //! [7] //! [8]
         case InsertText:
@@ -180,23 +178,12 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 //! [10]
 void DiagramScene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
-   // QLineF distance;
     if (myMode == InsertLine && line != 0) {
         QLineF newLine(line->line().p1(), mouseEvent->scenePos());
         line->setLine(newLine);
-        // qDebug("inserting : %f",line->line().length());
     } else if (myMode == MoveItem) {
-        DiagramItem *lined = qgraphicsitem_cast<DiagramItem *>(this->itemAt(mouseEvent->scenePos(),QTransform()));
-        QList<Arrow*> ar = lined->arrows;
-        Arrow *arw = ar[0];
-        QLineF lin = arw->line();
-       // QLineF lineA=toLine->line();
-        //QGraphicsLineItem lin = arrows.first()->line();
-        qDebug("moving: %f",lin.length());
         QGraphicsScene::mouseMoveEvent(mouseEvent);
     }
-
-
 }
 //! [10]
 
@@ -210,9 +197,7 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
         QList<QGraphicsItem *> endItems = items(line->line().p2());
         if (endItems.count() && endItems.first() == line)
             endItems.removeFirst();
-        QLineF distance = QLineF(startItems.first()->pos(),endItems.first()->pos());
-        qDebug("%f",line->line().length());
-        qDebug("distance : %f",distance.length());
+
         removeItem(line);
         delete line;
 //! [11] //! [12]

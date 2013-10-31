@@ -52,15 +52,11 @@ const qreal Pi = 3.14;
 Arrow::Arrow(DiagramItem *startItem, DiagramItem *endItem, QGraphicsItem *parent)
     : QGraphicsLineItem(parent)
 {
-    //int i=0;
     myStartItem = startItem;
     myEndItem = endItem;
     setFlag(QGraphicsItem::ItemIsSelectable, true);
     myColor = Qt::black;
     setPen(QPen(myColor, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-    //qreal leng;
-    //leng=line().length();
-    //if(i%100==0)qDebug("%6d : %f",i++,leng);
 }
 //! [0]
 
@@ -90,19 +86,6 @@ void Arrow::updatePosition()
 {
     QLineF line(mapFromItem(myStartItem, 0, 0), mapFromItem(myEndItem, 0, 0));
     setLine(line);
-    QLineF updator(myStartItem->pos(),myEndItem->pos());
-    QGraphicsLineItem updatee(updator);
-    updatee.setPen(QPen());
-    //updatee.paint(QPainter(),QStyleOptionGraphicsItem(),0);
-    //QPainter drwr();
-    //QPainter * drwp=&drwr;
-    //paint(drwp,updatee,0);
-
-
-
-    qDebug("updating : %f",updator.length());
-
-
 }
 //! [3]
 
@@ -115,9 +98,10 @@ void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
 
     QPen myPen = pen();
     myPen.setColor(myColor);
+    qreal arrowSize = 20;
     painter->setPen(myPen);
     painter->setBrush(myColor);
-    qreal arrowSize = 20;
+//! [4] //! [5]
 
     QLineF centerLine(myStartItem->pos(), myEndItem->pos());
     QPolygonF endPolygon = myEndItem->polygon();
@@ -125,26 +109,9 @@ void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
     QPointF p2;
     QPointF intersectPoint;
     QLineF polyLine;
-    //qDebug("%lf,%f",i++,centerLine.length());
-    /*
-    qDebug ("\nmyStartItem\t(%4.1f,%4.1f)",
-            myStartItem->pos().x(),myStartItem->pos().y());
-    qDebug ("myEndItem\t\t(%4.1f,%4.1f)",
-            myEndItem->pos().x(),myEndItem->pos().y());
-    qDebug ("centerLine\t(%4.1f,%4.1f),(%4.1f,%4.1f)",
-            centerLine.p1().x(),centerLine.p1().y(),
-            centerLine.p2().x(),centerLine.p2().y());
-    qDebug ("p1 \t\t(%4.1f,%4.1f)",p1.x(),p1.y());
-    qDebug ("p2 \t\t(%4.1f,%4.1f)",p2.x(),p2.y());
-    qDebug ("intersectPoint \t(%4.1f,%4.1f)",intersectPoint.x(),intersectPoint.y());
-    qDebug ("polyLine \t\t(%4.1f,%4.1f),(%4.1f,%4.1f)",
-            polyLine.p1().x(),polyLine.p1().y(),
-            polyLine.p2().x(),polyLine.p2().y());
-*/
     for (int i = 1; i < endPolygon.count(); ++i) {
     p2 = endPolygon.at(i) + myEndItem->pos();
     polyLine = QLineF(p1, p2);
-    setLine(polyLine);
     QLineF::IntersectType intersectType =
         polyLine.intersect(centerLine, &intersectPoint);
     if (intersectType == QLineF::BoundedIntersection)
@@ -154,7 +121,7 @@ void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
 
     setLine(QLineF(intersectPoint, myStartItem->pos()));
 //! [5] //! [6]
-//화살표 머리가 item을 향하도록 각도 계산
+
     double angle = ::acos(line().dx() / line().length());
     if (line().dy() >= 0)
         angle = (Pi * 2) - angle;
@@ -168,7 +135,6 @@ void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
         arrowHead << line().p1() << arrowP1 << arrowP2;
 //! [6] //! [7]
         painter->drawLine(line());
-
         painter->drawPolygon(arrowHead);
         if (isSelected()) {
             painter->setPen(QPen(myColor, 1, Qt::DashLine));
